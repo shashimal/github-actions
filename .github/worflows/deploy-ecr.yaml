@@ -1,0 +1,15 @@
+name: Deploy to ECR
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+jobs:
+  ci:
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
+    with:
+      iam_role_arn: "test"
+      aws_region: "us-east-1"
+      ecr_repository: "customer"
+      context: "./ecr/example"
