@@ -6,7 +6,7 @@ on:
     branches:
       - main
 jobs:
-  ci:
+  Build and Deploy to ECR:
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
     with:
       iam_role_arn: "test"
