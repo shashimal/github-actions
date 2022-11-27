@@ -12,8 +12,8 @@ jobs:
     with:
       aws_region: "us-east-1"
       ecr_repository: "webapp"
-      context: "./ecr-example"
-      file: "./ecr-example/Dockerfile"
+      context: "./examples/ecr"
+      file: "./examples/ecr/Dockerfile"
       tag_mutability: false
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
