@@ -1,36 +1,18 @@
-name: Deploy to ECS
+name: Greeting on variable day
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch
+
 env:
-  AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
-  AWS_REGION: "us-east-1"
-  ECR_REPOSITORY: "webapp"
-  ECR_CLUSTER: "test"
+  DAY_OF_WEEK: Monday
 
 jobs:
-  publish-to-ecr:
-    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
-    with:
-      aws_region: ${{ env.AWS_REGION }}
-      ecr_repository: ${{ env.ECR_REPOSITORY }}
-      context: "./examples/ecr"
-      file: "./examples/ecr/Dockerfile"
-      tag_mutability: false
-    secrets:
-      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
-
-  deploy-to-ecs:
-    needs: [ publish-to-ecr ]
-    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
-    with:
-      aws_region: ${{ env.AWS_REGION }}
-      cluster: ${{ env.ECR_CLUSTER }}
-      service: "nginx-webapp-service"
-      task_definition: "nginx-webapp"
-      container_name: "nginx-webapp"
-      image: ${secrets.AWS_ACCOUNT}.dkr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ needs.publish-to-ecr.outputs.image-tag }}
-    secrets:
-      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
+  greeting_job:
+    runs-on: ubuntu-latest
+    env:
+      Greeting: Hello
+    steps:
+      - name: "Say Hello Mona it's Monday"
+        run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
+        env:
+          First_Name: Mona
