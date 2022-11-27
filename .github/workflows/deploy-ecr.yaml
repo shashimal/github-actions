@@ -5,11 +5,12 @@ on:
   push:
     branches:
       - main
+
 jobs:
   publish-to-ecr:
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
     with:
-      iam_role_arn: "test"
+      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
       aws_region: "us-east-1"
-      ecr_repository: "customer"
-      context: "./ecr/example"
+      ecr_repository: "webapp"
+      context: "./ecr-example"
