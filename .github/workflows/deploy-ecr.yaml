@@ -13,5 +13,6 @@ jobs:
       aws_region: "us-east-1"
       ecr_repository: "webapp"
       context: "./ecr-example"
+      file: "./ecr-example"
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
