@@ -18,7 +18,8 @@ jobs:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
 
   deploy-to-ecs:
-    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
+    needs: [publish-to-ecr]
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
       aws_region: "us-east-1"
       cluster: "test"
