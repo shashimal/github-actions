@@ -1,0 +1,30 @@
+name: Deploy to ECR
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish-to-ecr:
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
+    with:
+      aws_region: "us-east-1"
+      ecr_repository: "webapp"
+      context: "./examples/ecr"
+      file: "./examples/ecr/Dockerfile"
+      tag_mutability: false
+    secrets:
+      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
+
+  deploy-to-ecs:
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
+    with:
+      aws_region: "us-east-1"
+      cluster: "test"
+      service: "nginx-webapp-service"
+      task_definition: "nginx-webapp"
+      container_name: "nginx-webapp"
+      image: ${{ need.publish-to-ecr.outputs.image }}
+    secrets:
+      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
