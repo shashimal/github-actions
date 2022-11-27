@@ -14,5 +14,6 @@ jobs:
       ecr_repository: "webapp"
       context: "./ecr-example"
       file: "./ecr-example/Dockerfile"
+      tag_mutability: false
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
