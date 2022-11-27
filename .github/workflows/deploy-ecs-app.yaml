@@ -1,18 +1,36 @@
-name: Greeting on variable day
+name: Deploy to ECS
 
 on:
-  workflow_dispatch
-
+  push:
+    branches:
+      - main
 env:
-  DAY_OF_WEEK: Monday
+  AWS_ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
+  AWS_REGION: "us-east-1"
+  ECR_REPOSITORY: "webapp"
+  ECR_CLUSTER: "test"
 
 jobs:
-  greeting_job:
-    runs-on: ubuntu-latest
-    env:
-      Greeting: Hello
-    steps:
-      - name: "Say Hello Mona it's Monday"
-        run: echo "$Greeting $First_Name. Today is $DAY_OF_WEEK!"
-        env:
-          First_Name: Mona
+  publish-to-ecr:
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
+    with:
+      aws_region: $AWS_REGION
+      ecr_repository: $ECR_REPOSITORY
+      context: "./examples/ecr"
+      file: "./examples/ecr/Dockerfile"
+      tag_mutability: false
+    secrets:
+      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
+
+  deploy-to-ecs:
+    needs: [ publish-to-ecr ]
+    uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
+    with:
+      aws_region: $AWS_REGION
+      cluster: $ECR_REPOSITORY
+      service: "nginx-webapp-service"
+      task_definition: "nginx-webapp"
+      container_name: "nginx-webapp"
+      image: ${secrets.AWS_ACCOUNT}.dkr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:${{ needs.publish-to-ecr.outputs.image-tag }}
+    secrets:
+      iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
