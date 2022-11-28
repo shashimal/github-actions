@@ -4,16 +4,12 @@ on:
   push:
     branches:
       - main
-      -
 jobs:
   publish-to-ecr:
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
-    env:
-      AWS_REGION: "us-east-1"
-      ECR_REPOSITORY: "webapp"
     with:
-      aws_region: ${{ env.AWS_REGION }}
-      ecr_repository: ${{ env.ECR_REPOSITORY }}
+      aws_region: "us-east-1"
+      ecr_repository: "webapp"
       context: "./examples/ecr"
       file: "./examples/ecr/Dockerfile"
       tag_mutability: false
@@ -23,15 +19,12 @@ jobs:
   deploy-to-ecs:
     needs: [ publish-to-ecr ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
-    env:
-      AWS_REGION: "us-east-1"
-      ECR_REPOSITORY: "webapp"
     with:
-      aws_region: ${{ env.AWS_REGION }}
+      aws_region: "us-east-1"
       cluster: 'test'
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: ${secrets.AWS_ACCOUNT}.dkr.${{ env.AWS_REGION }}.amazonaws.com/${{ env.ECR_REPOSITORY }}:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: ${secrets.AWS_ACCOUNT}.dkr.us-east-1.amazonaws.com/webapp:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
