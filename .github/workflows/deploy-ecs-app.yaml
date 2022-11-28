@@ -25,6 +25,6 @@ jobs:
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: ${secrets.AWS_ACCOUNT}.dkr.us-east-1.amazonaws.com/webapp:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: ${{secrets.AWS_ACCOUNT}}.dkr.us-east-1.amazonaws.com/webapp:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
