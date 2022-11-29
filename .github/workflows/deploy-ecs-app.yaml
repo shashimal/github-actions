@@ -8,6 +8,9 @@ jobs:
   prepare-data:
     name: Preparing the required data
     runs-on: ubuntu-latest
+    env:
+      REGION: "us-east-1"
+      REPOSITORY: "webapp"
     outputs:
       region: ${{ steps.region.outputs.region }}
       ecr_repo: ${{ steps.ecr_repo.outputs.ecr_repo }}
@@ -15,16 +18,12 @@ jobs:
     steps:
       - name: Region
         id: region
-        env:
-          REGION: "us-east-1"
         run: |
           echo "region=${{ env.REGION }}" >>$GITHUB_OUTPUT
         shell: bash
 
       - name: ECR Repo
         id: ecr_repo
-        env:
-          REPOSITORY: "webapp"
         run: |
           echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
         shell: bash
