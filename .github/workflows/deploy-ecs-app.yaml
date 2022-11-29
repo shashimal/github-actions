@@ -19,7 +19,6 @@ jobs:
           REGION: "us-east-1"
         run: |
           echo "region=${{ env.REGION }}" >>$GITHUB_OUTPUT
-          echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
         shell: bash
 
       - name: ECR Repo
