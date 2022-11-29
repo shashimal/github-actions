@@ -39,7 +39,7 @@ jobs:
     needs: [ publish-to-ecr ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
-      aws_region: ${{ jobs.prepare-data.outputs.region }}
+      aws_region: ${{ needs.common-data.outputs.region }}
       cluster: 'test'
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
