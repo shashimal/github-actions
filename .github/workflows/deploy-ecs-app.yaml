@@ -9,17 +9,24 @@ jobs:
     name: Preparing the required data
     runs-on: ubuntu-latest
     outputs:
-      region: ${{ steps.common-data.outputs.region }}
-      ecr_repo: ${{ steps.common-data.outputs.ecr_repo }}
+      region: ${{ steps.region.outputs.region }}
+      ecr_repo: ${{ steps.ecr_repo.outputs.ecr_repo }}
 
     steps:
-      - name: Common Data
-        id: common-data
+      - name: Region
+        id: region
         env:
-          REGISTRY: "us-east-1"
+          REGION: "us-east-1"
+        run: |
+          echo "region=${{ env.REGION }}" >>$GITHUB_OUTPUT
+          echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
+        shell: bash
+
+      - name: ECR Repo
+        id: ecr_repo
+        env:
           REPOSITORY: "webapp"
         run: |
-          echo "region=${{ env.REGISTRY }}" >>$GITHUB_OUTPUT
           echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
         shell: bash
 
@@ -27,8 +34,8 @@ jobs:
     needs: [ prepare-data ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
     with:
-      aws_region: ${{ needs.common-data.prepare-data.outputs.region }}
-      ecr_repository: ${{ needs.common-data.prepare-data.outputs.ecr_repo }}
+      aws_region: ${{ needs.prepare-data.outputs.region }}
+      ecr_repository: ${{ needs.prepare-data.outputs.ecr_repo }}
       context: "./examples/ecr"
       file: "./examples/ecr/Dockerfile"
       tag_mutability: false
@@ -39,11 +46,11 @@ jobs:
     needs: [ publish-to-ecr ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
-      aws_region: ${{ needs.common-data.outputs.region }}
+      aws_region: ${{ needs.prepare-data.outputs.region }}
       cluster: 'test'
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: 793209430381.dkr.ecr.${{ needs.common-data.outputs.region }}.amazonaws.com/${{ needs.common-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: 793209430381.dkr.ecr.${{ needs.prepare-data.outputs.region }}.amazonaws.com/${{ needs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
