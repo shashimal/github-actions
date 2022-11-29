@@ -5,11 +5,29 @@ on:
     branches:
       - main
 jobs:
+  prepare-data:
+    name: Preparing the required data
+    runs-on: ubuntu-latest
+    outputs:
+      region: ${{ steps.common-data.outputs.region }}
+      ecr_repo: ${{ steps.common-data.outputs.ecr_repo }}
+
+    steps:
+      - name: Common Data
+        id: common-data
+        env:
+          REGISTRY: "us-east-1"
+          REPOSITORY: "webapp"
+        run: |
+          echo "region=${{ env.REGISTRY }}" >>$GITHUB_OUTPUT
+          echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
+        shell: bash
+
   publish-to-ecr:
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
     with:
-      aws_region: "us-east-1"
-      ecr_repository: "webapp"
+      aws_region: ${{ jobs.prepare-data.outputs.region }}
+      ecr_repository: ${{ jobs.prepare-data.outputs.ecr_repo }}
       context: "./examples/ecr"
       file: "./examples/ecr/Dockerfile"
       tag_mutability: false
@@ -20,11 +38,11 @@ jobs:
     needs: [ publish-to-ecr ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
-      aws_region: "us-east-1"
+      aws_region: ${{ jobs.prepare-data.outputs.region }}
       cluster: 'test'
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: 793209430381.dkr.ecr.us-east-1.amazonaws.com/webapp:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: 793209430381.dkr.ecr.${{ jobs.prepare-data.outputs.region }}.amazonaws.com/${{ jobs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
