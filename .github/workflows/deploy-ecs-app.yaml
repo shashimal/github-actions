@@ -42,7 +42,7 @@ jobs:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
 
   deploy-to-ecs:
-    needs: [ publish-to-ecr ]
+    needs: [ publish-to-ecr , prepare-data ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
       aws_region: ${{ needs.prepare-data.outputs.region }}
