@@ -11,22 +11,14 @@ jobs:
     env:
       REGION: "us-east-1"
       REPOSITORY: "webapp"
-      ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
     outputs:
       region: ${{ steps.region.outputs.region }}
       ecr_repo: ${{ steps.ecr_repo.outputs.ecr_repo }}
-      account: ${{ steps.account.outputs.account }}
     steps:
       - name: Region
         id: region
         run: |
           echo "region=${{ env.REGION }}" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: account
-        id: account
-        run: |
-          echo "account=${{ env.ACCOUNT }}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: ECR Repo
@@ -56,6 +48,7 @@ jobs:
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: ${{ needs.prepare-data.outputs.account }}.dkr.ecr.${{ needs.prepare-data.outputs.region }}.amazonaws.com/${{ needs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
+      image: ${{ secrets.AWS_ACCOUNT }}.dkr.ecr.${{ needs.prepare-data.outputs.region }}.amazonaws.com/${{ needs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
+
