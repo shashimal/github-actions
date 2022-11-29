@@ -11,21 +11,28 @@ jobs:
     env:
       REGION: "us-east-1"
       REPOSITORY: "webapp"
+      ACCOUNT: ${{ secrets.AWS_ACCOUNT }}
     outputs:
       region: ${{ steps.region.outputs.region }}
       ecr_repo: ${{ steps.ecr_repo.outputs.ecr_repo }}
-
+      account: ${{ steps.account.outputs.account }}
     steps:
       - name: Region
         id: region
         run: |
-          echo "region=${{ env.REGION }}" >>$GITHUB_OUTPUT
+          echo "region=${{ env.REGION }}" >> $GITHUB_OUTPUT
+        shell: bash
+
+      - name: account
+        id: account
+        run: |
+          echo "account=${{ env.ACCOUNT }}" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: ECR Repo
         id: ecr_repo
         run: |
-          echo "ecr_repo=${{ env.REPOSITORY }}" >>$GITHUB_OUTPUT
+          echo "ecr_repo=${{ env.REPOSITORY }}" >> $GITHUB_OUTPUT
         shell: bash
 
   publish-to-ecr:
@@ -49,6 +56,6 @@ jobs:
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: 793209430381.dkr.ecr.${{ needs.prepare-data.outputs.region }}.amazonaws.com/${{ needs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: ${{ needs.prepare-data.outputs.account }}.dkr.ecr.${{ needs.prepare-data.outputs.region }}.amazonaws.com/${{ needs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
