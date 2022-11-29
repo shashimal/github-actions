@@ -24,10 +24,11 @@ jobs:
         shell: bash
 
   publish-to-ecr:
+    needs: [ prepare-data ]
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecr.yaml@main
     with:
-      aws_region: ${{ jobs.prepare-data.outputs.region }}
-      ecr_repository: ${{ jobs.prepare-data.outputs.ecr_repo }}
+      aws_region: ${{ needs.common-data.prepare-data.outputs.region }}
+      ecr_repository: ${{ needs.common-data.prepare-data.outputs.ecr_repo }}
       context: "./examples/ecr"
       file: "./examples/ecr/Dockerfile"
       tag_mutability: false
@@ -43,6 +44,6 @@ jobs:
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
-      image: 793209430381.dkr.ecr.${{ jobs.prepare-data.outputs.region }}.amazonaws.com/${{ jobs.prepare-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
+      image: 793209430381.dkr.ecr.${{ needs.common-data.outputs.region }}.amazonaws.com/${{ needs.common-data.outputs.ecr_repo }}:${{ needs.publish-to-ecr.outputs.image-tag }}
     secrets:
       iam_role_arn: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
