@@ -2,14 +2,16 @@ name : Deploy Lambda
 
 on:
   workflow_dispatch:
-
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   deploy-lambda:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+#    permissions:
+#      id-token: write
+#      contents: read
     steps:
       - uses: actions/checkout@v2
 
