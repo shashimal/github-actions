@@ -21,4 +21,8 @@ jobs:
 
       - name: Zip
         run: |
-          zip -j -r ./deploy.zip ./examples/lambda/*
+            zip -j -r ./deploy.zip ./examples/lambda/*
+      - name: Deploy to AuditStream Lambda
+        run: |
+            aws lambda update-function-code --function-name=cue-lambda --zip-file=fileb://deploy.zip
+          
