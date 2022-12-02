@@ -1,9 +1,10 @@
 name: Deploy to ECS
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+#  push:
+#    branches:
+#      - main
 jobs:
   prepare-data:
     name: Preparing the required data
