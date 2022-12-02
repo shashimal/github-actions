@@ -8,3 +8,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Configure aws credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.AWS_GITHUB_IDENTITY_ROLE }}
+          role-session-name: ${{ secrets.SESSION_NAME }}
+          aws-region: ${{ secrets.AWS_REGION }}
