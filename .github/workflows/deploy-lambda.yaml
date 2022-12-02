@@ -9,9 +9,6 @@ permissions:
 jobs:
   deploy-lambda:
     runs-on: ubuntu-latest
-#    permissions:
-#      id-token: write
-#      contents: read
     steps:
       - uses: actions/checkout@v2
 
@@ -21,3 +18,7 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           role-session-name: ${{ secrets.SESSION_NAME }}
           aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Zip
+        run: |
+          zip -j -r ./deploy.zip ./examples/lambda/*
