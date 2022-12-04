@@ -59,6 +59,14 @@ jobs:
           cd envs/${{ matrix.path }}
           terraform init -input=false
 
+      - name: Terraform plan
+        id: plan
+        continue-on-error: true
+        run: |
+          cd envs/${{ matrix.path }}
+          terraform plan -input=false -no-color -out=tfplan \
+          && terraform show -no-color tfplan
+
 
 
 
