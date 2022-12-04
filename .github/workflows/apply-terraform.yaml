@@ -15,7 +15,7 @@ jobs:
       - name: Comment on PR that Terraform apply is running
         uses: mshick/add-pr-comment@v1
         with:
-          repo-token: ${{ secrets.GIT_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
           repo-token-user-login: 'github-actions[bot]'
           message: |
             ***Running terraform apply***
