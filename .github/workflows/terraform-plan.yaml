@@ -31,6 +31,12 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - dev
+          - stg
 
     steps:
       - name: Checkout code
@@ -47,6 +53,11 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.3.4
+
+      - name: Terraform init
+        run: |
+          cd envs/${{ matrix.path }}
+          terraform init -input=false
 
 
 
