@@ -79,6 +79,7 @@ jobs:
           echo "PLAN<<EOF" >> $GITHUB_ENV
           echo "$PLAN" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
+
       - name: Post Plan to GitHub PR
         uses: mshick/add-pr-comment@v1
         with:
