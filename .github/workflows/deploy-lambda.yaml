@@ -43,7 +43,7 @@ jobs:
         run: |
             cd examples/lambda/
             npm install 
-            zip -r ./deploy.zip ../../examples/lambda/*
+            zip -r ./deploy.zip .
       - name: Deploy to AuditStream Lambda
         run: |
             echo ${{ needs.check-env.outputs.env_name }}
