@@ -45,6 +45,7 @@ jobs:
             npm install 
             npm run build
             zip -j -r ./deploy.zip ./dist/*
+            ls -l
       - name: Deploy to AuditStream Lambda
         run: |
             echo ${{ needs.check-env.outputs.env_name }}
