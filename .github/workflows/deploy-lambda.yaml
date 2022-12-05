@@ -50,5 +50,5 @@ jobs:
         run: |
             pwd
             echo ${{ needs.check-env.outputs.env_name }}
-            aws lambda update-function-code --function-name=cue-lambda-${{ needs.check-env.outputs.env_name }} --zip-file=fileb://deploy.zip
+            aws lambda update-function-code --function-name=cue-lambda-${{ needs.check-env.outputs.env_name }} --zip-file=fileb://examples/lambda/deploy.zip
           
