@@ -1,0 +1,96 @@
+name: Plan and Apply Terraform
+
+on:
+  pull_request:
+    branches:
+      - main
+
+#  workflow_dispatch:
+#  push:
+#    branches:
+#      - main
+
+jobs:
+  start-terraform-plan:
+    name: Starting Terraform plan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Comment on PR that Terraform plan is running
+        uses: mshick/add-pr-comment@v1
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ***Running terraform plan***
+            Results will display here momentarily...
+
+  terraform-plan:
+    name: Running Terraform plan
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - dev
+          - stg
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          role-session-name: ${{ secrets.SESSION_NAME }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.4
+
+      - name: Terraform init
+        run: |
+          cd envs/${{ matrix.path }}
+          terraform init -input=false
+
+      - name: Terraform plan
+        id: plan
+        continue-on-error: true
+        run: |
+          cd envs/${{ matrix.path }}
+          terraform plan -input=false -no-color -out=tfplan \
+          && terraform show -no-color tfplan
+
+      - name: Reformat Plan
+        run: |
+          echo '${{ steps.plan.outputs.stdout || steps.plan.outputs.stderr }}' \
+          | sed -E 's/^([[:space:]]+)([-+])/\2\1/g' > plan.txt
+
+
+      - name: Put Plan in Env Var
+        run: |
+          PLAN=$(cat plan.txt)
+          echo "PLAN<<EOF" >> $GITHUB_ENV
+          echo "$PLAN" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Post Plan to GitHub PR
+        uses: mshick/add-pr-comment@v1
+        with:
+          allow-repeats: true
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token-user-login: 'github-actions[bot]'
+          message: |
+            ## ${{ matrix.path }} plan
+            ```diff
+            ${{ env.PLAN }}
+            ```
+
+
