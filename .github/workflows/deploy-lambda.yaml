@@ -43,5 +43,6 @@ jobs:
             zip -j -r ./deploy.zip ./examples/lambda/*
       - name: Deploy to AuditStream Lambda
         run: |
+            echo ${{ needs.  check-env.outputs.env-name }}
             aws lambda update-function-code --function-name=cue-lambda --zip-file=fileb://deploy.zip
           
