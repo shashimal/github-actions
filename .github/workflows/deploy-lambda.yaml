@@ -28,6 +28,7 @@ jobs:
 
   deploy-lambda:
     runs-on: ubuntu-latest
+    needs: [ check-env ]
     steps:
       - uses: actions/checkout@v2
 
