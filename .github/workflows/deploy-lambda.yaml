@@ -7,6 +7,25 @@ permissions:
   contents: read
 
 jobs:
+  check-env:
+    runs-on: ubuntu-latest
+    outputs:
+      env_name: ${{ steps.check-branch.outputs.env-name }}
+    steps:
+      - name: Check branch
+        id: check-branch
+        run: |
+          echo "Running on branch ${{ github.ref }}"
+          if [ "${{ github.ref }}" = "refs/heads/prd" ]; then
+            echo "env-name=prd" >>$GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/stg" ]; then
+            echo "env-name=stg" >>$GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/dev" ]; then
+            echo "env-name=dev" >>$GITHUB_OUTPUT
+          else
+            echo "env-name=dev" >>$GITHUB_OUTPUT
+          fi
+
   deploy-lambda:
     runs-on: ubuntu-latest
     steps:
