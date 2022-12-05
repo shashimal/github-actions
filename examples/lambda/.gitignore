@@ -1,0 +1,6 @@
+!jest.config.js
+!generator.js
+*.d.ts
+node_modules
+.idea
+dist

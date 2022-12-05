@@ -43,9 +43,9 @@ jobs:
         run: |
             cd examples/lambda/
             npm install 
-            zip -r ./deploy.zip .
+            zip -j -r ./deploy.zip ./dist/*
       - name: Deploy to AuditStream Lambda
         run: |
             echo ${{ needs.check-env.outputs.env_name }}
-            aws lambda update-function-code --function-name=cue-lambda-${{ needs.check-env.outputs.env_name }} --zip-file=fileb://examples/lambda/deploy.zip
+            aws lambda update-function-code --function-name=cue-lambda-${{ needs.check-env.outputs.env_name }} --zip-file=fileb://deploy.zip
           

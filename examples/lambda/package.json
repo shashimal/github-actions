@@ -4,12 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack --mode production"
   },
   "author": "sivarasan",
   "license": "ISC",
+  "devDependencies": {
+    "ts-loader": "^9.4.2",
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.0"
+  },
   "dependencies": {
     "aws-sdk": "^2.1204.0",
-    "axios": "^0.27.2"
+    "axios": "^0.27.2",
+    "json-loader": "^0.5.7",
+    "typescript": "^4.9.3"
   }
 }
