@@ -48,6 +48,7 @@ jobs:
             ls -l
       - name: Deploy to AuditStream Lambda
         run: |
+            pwd
             echo ${{ needs.check-env.outputs.env_name }}
             aws lambda update-function-code --function-name=cue-lambda-${{ needs.check-env.outputs.env_name }} --zip-file=fileb://deploy.zip
           
