@@ -43,6 +43,7 @@ jobs:
         run: |
             cd examples/lambda/
             npm install 
+            npm run build
             zip -j -r ./deploy.zip ./dist/*
       - name: Deploy to AuditStream Lambda
         run: |
