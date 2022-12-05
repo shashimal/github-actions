@@ -41,6 +41,8 @@ jobs:
 
       - name: Zip
         run: |
+            cd examples/lambda/
+            npm install 
             zip -j -r ./deploy.zip ./examples/lambda/*
       - name: Deploy to AuditStream Lambda
         run: |
