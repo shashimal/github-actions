@@ -45,7 +45,7 @@ jobs:
     uses: shashimal/common-github-workflows/.github/workflows/deploy-ecs.yaml@main
     with:
       aws_region: ${{ needs.prepare-data.outputs.region }}
-      cluster: 'test'
+      cluster: 'nginx-ecs-cluster'
       service: "nginx-webapp-service"
       task_definition: "nginx-webapp"
       container_name: "nginx-webapp"
